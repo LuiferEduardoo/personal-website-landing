@@ -19,7 +19,9 @@ import Blog from "../components/Blog.astro";
   <main>
     <Hero />
     <AboutMe />
+    <hr class="section-divider" />
     <Projects />
+    <hr class="section-divider" />
     <Blog />
   </main>
 </BaseLayout>
@@ -56,6 +58,13 @@ import Blog from "../components/Blog.astro";
     align-items: center;
     color: inherit;
     text-decoration: none;
+  }
+
+  .section-divider {
+    height: 1px;
+    margin: 0;
+    border: 0;
+    background-color: var(--color-border);
   }
 </style>
 
