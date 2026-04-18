@@ -1,0 +1,48 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+  lang?: string;
+}
+
+const {
+  title = "Luifer Ortega",
+  description = "",
+  lang = "es",
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <link rel="icon" href="/logo.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    {description && <meta name="description" content={description} />}
+    <title>{title}</title>
+
+    <script is:inline>
+      (() => {
+        try {
+          const stored = localStorage.getItem("theme");
+          const theme =
+            stored === "light" || stored === "dark"
+              ? stored
+              : window.matchMedia("(prefers-color-scheme: dark)").matches
+                ? "dark"
+                : "light";
+          document.documentElement.dataset.theme = theme;
+        } catch {
+          document.documentElement.dataset.theme = "light";
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

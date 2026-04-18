@@ -1,0 +1,98 @@
+---
+---
+
+<button
+  type="button"
+  class="theme-toggle"
+  data-theme-toggle
+  aria-label="Cambiar tema"
+  title="Cambiar tema"
+>
+  <svg class="icon icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+    <circle cx="12" cy="12" r="4" fill="currentColor"></circle>
+    <g stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <line x1="12" y1="2" x2="12" y2="5"></line>
+      <line x1="12" y1="19" x2="12" y2="22"></line>
+      <line x1="2" y1="12" x2="5" y2="12"></line>
+      <line x1="19" y1="12" x2="22" y2="12"></line>
+      <line x1="4.2" y1="4.2" x2="6.3" y2="6.3"></line>
+      <line x1="17.7" y1="17.7" x2="19.8" y2="19.8"></line>
+      <line x1="4.2" y1="19.8" x2="6.3" y2="17.7"></line>
+      <line x1="17.7" y1="6.3" x2="19.8" y2="4.2"></line>
+    </g>
+  </svg>
+
+  <svg class="icon icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+    <path
+      d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"
+      fill="currentColor"
+    ></path>
+  </svg>
+</button>
+
+<style>
+  .theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    cursor: pointer;
+    transition:
+      background-color var(--transition),
+      border-color var(--transition),
+      color var(--transition);
+  }
+
+  .theme-toggle:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  .icon {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  :global(:root[data-theme="dark"]) .icon-sun,
+  :global(:root:not([data-theme="dark"])) .icon-moon {
+    display: none;
+  }
+</style>
+
+<script>
+  const STORAGE_KEY = "theme";
+
+  const getStored = (): "light" | "dark" | null => {
+    const value = localStorage.getItem(STORAGE_KEY);
+    return value === "light" || value === "dark" ? value : null;
+  };
+
+  const applyTheme = (theme: "light" | "dark") => {
+    document.documentElement.dataset.theme = theme;
+  };
+
+  document
+    .querySelectorAll<HTMLButtonElement>("[data-theme-toggle]")
+    .forEach((button) => {
+      button.addEventListener("click", () => {
+        const current = document.documentElement.dataset.theme === "dark"
+          ? "dark"
+          : "light";
+        const next = current === "dark" ? "light" : "dark";
+        applyTheme(next);
+        localStorage.setItem(STORAGE_KEY, next);
+      });
+    });
+
+  const media = window.matchMedia("(prefers-color-scheme: dark)");
+  media.addEventListener("change", (event) => {
+    if (getStored() !== null) return;
+    applyTheme(event.matches ? "dark" : "light");
+  });
+</script>
