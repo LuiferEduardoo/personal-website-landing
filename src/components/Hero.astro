@@ -21,20 +21,37 @@ const slides = [
       <a href="#proyectos" class="btn btn-primary">Ver proyectos</a>
       <a href="#sobre-mi" class="btn btn-secondary">Sobre mí</a>
     </div>
-    <a
-      class="hero-github"
-      href="https://github.com/LuiferEduardoo"
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label="Perfil de GitHub de Luifer Ortega"
-    >
-      <svg viewBox="0 0 24 24" aria-hidden="true" width="28" height="28">
-        <path
-          fill="currentColor"
-          d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.7-3.88-1.54-3.88-1.54-.52-1.34-1.27-1.7-1.27-1.7-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.02 1.75 2.69 1.24 3.35.95.1-.74.4-1.24.72-1.53-2.55-.29-5.24-1.27-5.24-5.66 0-1.25.45-2.27 1.18-3.07-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.16 1.17a10.95 10.95 0 0 1 5.76 0c2.2-1.48 3.16-1.17 3.16-1.17.63 1.58.24 2.75.12 3.04.73.8 1.18 1.82 1.18 3.07 0 4.4-2.69 5.36-5.26 5.64.41.35.78 1.05.78 2.12 0 1.53-.01 2.76-.01 3.14 0 .31.21.68.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5z"
-        ></path>
-      </svg>
-    </a>
+    <div class="hero-socials">
+      <a
+        class="hero-social"
+        href="https://github.com/LuiferEduardoo"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Perfil de GitHub de Luifer Ortega"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true" width="28" height="28">
+          <path
+            fill="currentColor"
+            d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.7-3.88-1.54-3.88-1.54-.52-1.34-1.27-1.7-1.27-1.7-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.02 1.75 2.69 1.24 3.35.95.1-.74.4-1.24.72-1.53-2.55-.29-5.24-1.27-5.24-5.66 0-1.25.45-2.27 1.18-3.07-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.16 1.17a10.95 10.95 0 0 1 5.76 0c2.2-1.48 3.16-1.17 3.16-1.17.63 1.58.24 2.75.12 3.04.73.8 1.18 1.82 1.18 3.07 0 4.4-2.69 5.36-5.26 5.64.41.35.78 1.05.78 2.12 0 1.53-.01 2.76-.01 3.14 0 .31.21.68.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5z"
+          ></path>
+        </svg>
+      </a>
+
+      <a
+        class="hero-social"
+        href="https://www.linkedin.com/in/luifereduardoo"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Perfil de LinkedIn de Luifer Ortega"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true" width="28" height="28">
+          <path
+            fill="currentColor"
+            d="M19 0h-14c-2.8 0-5 2.2-5 5v14c0 2.8 2.2 5 5 5h14c2.8 0 5-2.2 5-5v-14c0-2.8-2.2-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.3c-1 0-1.7-.8-1.7-1.7s.8-1.7 1.7-1.7 1.7.8 1.7 1.7-.7 1.7-1.7 1.7zm13.5 12.3h-3v-5.6c0-1.4-.5-2.4-1.8-2.4-1 0-1.6.7-1.9 1.3-.1.2-.1.5-.1.9v5.8h-3s0-9.8 0-11h3v1.6c.4-.6 1.1-1.5 2.8-1.5 2 0 3.5 1.3 3.5 4.2v6.7z"
+          ></path>
+        </svg>
+      </a>
+    </div>
   </div>
 </section>
 
@@ -136,7 +153,13 @@ const slides = [
     border-color: #fff;
   }
 
-  .hero-github {
+  .hero-socials {
+    display: inline-flex;
+    gap: 1.25rem;
+    justify-content: center;
+  }
+
+  .hero-social {
     display: inline-flex;
     color: #fff;
     opacity: 0.85;
@@ -145,7 +168,7 @@ const slides = [
       transform var(--transition);
   }
 
-  .hero-github:hover {
+  .hero-social:hover {
     opacity: 1;
     transform: scale(1.1);
   }
