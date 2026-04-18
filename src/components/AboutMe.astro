@@ -1,0 +1,177 @@
+---
+interface Block {
+  cmd: string;
+  output: string[];
+}
+
+const blocks: Block[] = [
+  { cmd: "whoami", output: ["luifer_ortega"] },
+  {
+    cmd: "cat about.md",
+    output: [
+      `A mis 13 años conocí el mundo de la programación, y sí, fue por un "Hola mundo". Ese simple mensaje despertó en mí una curiosidad que hasta ahora sigue viviendo dentro de mis entrañas.`,
+      `Durante estos años he construido cosas asombrosas, pero en este texto no quiero hablar de mi vida profesional, sino de mí como persona. Me fascina la escritura; por medio de ella logro expresar esos sentimientos y pensamientos abstractos que, de forma visual o auditiva, sería complicado expresar.`,
+      `El montañismo me da paz y me ayuda a centrarme en mis pensamientos y ordenar mis ideas. Últimamente, he desarrollado una nueva fascinación: el running…`,
+      `Porque al final, más allá del código, soy alguien que busca entender y crear.`,
+    ],
+  },
+  { cmd: "echo $STATUS", output: ["building the future"] },
+];
+---
+
+<section id="sobre-mi" class="about" aria-labelledby="about-heading">
+  <h2 id="about-heading" class="about-heading">Sobre mí</h2>
+
+  <article class="terminal">
+    <header class="terminal-head">
+      <span class="dots" aria-hidden="true">
+        <span class="dot dot-red"></span>
+        <span class="dot dot-yellow"></span>
+        <span class="dot dot-green"></span>
+      </span>
+      <span class="terminal-title">terminal</span>
+    </header>
+
+    <div class="terminal-body">
+      {
+        blocks.map((block) => (
+          <div class="block">
+            <div class="line line-cmd">
+              <span class="prompt" aria-hidden="true">$</span>
+              <span>{block.cmd}</span>
+            </div>
+            {block.output.map((line) => (
+              <div class="line line-out">
+                <span class="arrow" aria-hidden="true">&gt;</span>
+                <span>{line}</span>
+              </div>
+            ))}
+          </div>
+        ))
+      }
+    </div>
+  </article>
+</section>
+
+<style>
+  .about {
+    --grid-color: color-mix(in srgb, var(--color-text) 8%, transparent);
+
+    position: relative;
+    padding: clamp(4rem, 10vw, 8rem) clamp(1rem, 4vw, 2rem);
+    background-color: var(--color-bg);
+    background-image:
+      linear-gradient(var(--grid-color) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+    background-size: 4rem 4rem;
+    background-position: center center;
+  }
+
+  .about-heading {
+    max-width: 44rem;
+    margin: 0 auto clamp(1.5rem, 4vw, 2.5rem);
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--color-text);
+    text-align: center;
+  }
+
+  .terminal {
+    --term-bg: #ffffff;
+    --term-border: rgba(0, 0, 0, 0.08);
+    --term-prompt: #6b7280;
+    --term-arrow: #9ca3af;
+    --term-text: #1f2937;
+    --term-title: #6b7280;
+    --term-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.2);
+
+    max-width: 44rem;
+    margin-inline: auto;
+    padding: clamp(1.25rem, 3vw, 2rem);
+    background-color: var(--term-bg);
+    border: 1px solid var(--term-border);
+    border-radius: 1rem;
+    box-shadow: var(--term-shadow);
+    color: var(--term-text);
+    transition:
+      background-color var(--transition),
+      border-color var(--transition),
+      color var(--transition);
+  }
+
+  :global(:root[data-theme="dark"]) .terminal {
+    --term-bg: #0a0e14;
+    --term-border: rgba(255, 255, 255, 0.08);
+    --term-prompt: #8b8ea6;
+    --term-arrow: #6b7280;
+    --term-text: #e6edf3;
+    --term-title: #9aa5b1;
+    --term-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.6);
+  }
+
+  .terminal-head {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .dots {
+    display: inline-flex;
+    gap: 0.5rem;
+  }
+
+  .dot {
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 999px;
+  }
+
+  .dot-red {
+    background-color: #ff5f57;
+  }
+  .dot-yellow {
+    background-color: #febc2e;
+  }
+  .dot-green {
+    background-color: #28c840;
+  }
+
+  .terminal-title {
+    font-family: ui-monospace, "SFMono-Regular", "Menlo", "Consolas", monospace;
+    font-size: 0.875rem;
+    color: var(--term-title);
+  }
+
+  .terminal-body {
+    font-family: ui-monospace, "SFMono-Regular", "Menlo", "Consolas", monospace;
+    font-size: clamp(0.875rem, 1.8vw, 1rem);
+    line-height: 1.8;
+  }
+
+  .block + .block {
+    margin-top: 1.25rem;
+  }
+
+  .line {
+    display: flex;
+    gap: 0.75rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .line-out + .line-out {
+    margin-top: 0.5rem;
+  }
+
+  .prompt {
+    color: var(--term-prompt);
+    user-select: none;
+  }
+
+  .arrow {
+    color: var(--term-arrow);
+    user-select: none;
+  }
+</style>
