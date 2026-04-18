@@ -1,0 +1,362 @@
+---
+interface Project {
+  title: string;
+  description: string;
+  image: string;
+  url?: string;
+}
+
+const projects: Project[] = [
+  {
+    title: "Proyecto 1",
+    description:
+      "Breve descripción del proyecto. Reemplaza este texto con el resumen real de lo que construiste.",
+    image: "/projects/project-1.svg",
+  },
+  {
+    title: "Proyecto 2",
+    description:
+      "Breve descripción del proyecto. Reemplaza este texto con el resumen real de lo que construiste.",
+    image: "/projects/project-2.svg",
+  },
+  {
+    title: "Proyecto 3",
+    description:
+      "Breve descripción del proyecto. Reemplaza este texto con el resumen real de lo que construiste.",
+    image: "/projects/project-3.svg",
+  },
+];
+---
+
+<section id="proyectos" class="projects" aria-labelledby="projects-heading">
+  <h2 id="projects-heading" class="projects-heading">Proyectos</h2>
+
+  <div
+    class="carousel"
+    role="region"
+    aria-roledescription="carrusel"
+    aria-label="Proyectos"
+  >
+    <div class="track" data-track>
+      {
+        projects.map((project, i) => (
+          <article class="slide">
+            <div class="card">
+              <div class="card-image">
+                <img
+                  src={project.image}
+                  alt=""
+                  loading={i === 0 ? "eager" : "lazy"}
+                  decoding="async"
+                  draggable="false"
+                />
+              </div>
+              <div class="card-body">
+                <h3 class="card-title">{project.title}</h3>
+                <p class="card-description">{project.description}</p>
+                {project.url && (
+                  <a
+                    class="card-link"
+                    href={project.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Ver proyecto →
+                  </a>
+                )}
+              </div>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+
+    <button type="button" class="arrow prev" data-prev aria-label="Anterior">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path
+          d="M15 6l-6 6 6 6"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"></path>
+      </svg>
+    </button>
+    <button type="button" class="arrow next" data-next aria-label="Siguiente">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path
+          d="M9 6l6 6-6 6"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"></path>
+      </svg>
+    </button>
+
+    <div class="dots" role="tablist" aria-label="Selector de proyecto">
+      {
+        projects.map((_, i) => (
+          <button
+            type="button"
+            class="dot"
+            data-dot={i}
+            role="tab"
+            aria-label={`Ver proyecto ${i + 1}`}
+          />
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .projects {
+    --proj-bg: #f5f5f7;
+    --proj-text: #111111;
+    --proj-muted: #555555;
+    --proj-border: rgba(0, 0, 0, 0.1);
+    --proj-surface: rgba(0, 0, 0, 0.02);
+    --proj-image-bg: rgba(0, 0, 0, 0.04);
+    --proj-arrow-bg: rgba(255, 255, 255, 0.8);
+    --proj-arrow-border: rgba(0, 0, 0, 0.12);
+    --proj-arrow-hover-bg: rgba(0, 0, 0, 0.06);
+    --proj-arrow-hover-border: rgba(0, 0, 0, 0.3);
+    --proj-dot: rgba(0, 0, 0, 0.25);
+    --proj-dot-active: #111111;
+    --proj-link: var(--color-accent);
+
+    padding: clamp(4rem, 10vw, 8rem) clamp(1rem, 4vw, 2rem);
+    background-color: var(--proj-bg);
+    color: var(--proj-text);
+    transition:
+      background-color var(--transition),
+      color var(--transition);
+  }
+
+  :global(:root[data-theme="dark"]) .projects {
+    --proj-bg: #0d1117;
+    --proj-text: #e6edf3;
+    --proj-muted: #9aa5b1;
+    --proj-border: rgba(255, 255, 255, 0.08);
+    --proj-surface: rgba(255, 255, 255, 0.02);
+    --proj-image-bg: rgba(255, 255, 255, 0.04);
+    --proj-arrow-bg: rgba(13, 17, 23, 0.7);
+    --proj-arrow-border: rgba(255, 255, 255, 0.15);
+    --proj-arrow-hover-bg: rgba(255, 255, 255, 0.12);
+    --proj-arrow-hover-border: rgba(255, 255, 255, 0.4);
+    --proj-dot: rgba(255, 255, 255, 0.25);
+    --proj-dot-active: #ffffff;
+    --proj-link: #60a5fa;
+  }
+
+  .projects-heading {
+    max-width: 72rem;
+    margin: 0 auto clamp(1.5rem, 4vw, 2.5rem);
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
+  }
+
+  .carousel {
+    position: relative;
+    max-width: 72rem;
+    margin-inline: auto;
+  }
+
+  .track {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    gap: clamp(1rem, 2vw, 1.5rem);
+    padding-bottom: 0.25rem;
+  }
+  .track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .slide {
+    flex: 0 0 100%;
+    scroll-snap-align: start;
+  }
+
+  .card {
+    display: grid;
+    grid-template-columns: 1fr;
+    border: 1px solid var(--proj-border);
+    border-radius: 1rem;
+    overflow: hidden;
+    background-color: var(--proj-surface);
+  }
+
+  @media (min-width: 768px) {
+    .card {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .card-image {
+    aspect-ratio: 16 / 10;
+    background-color: var(--proj-image-bg);
+    overflow: hidden;
+  }
+
+  .card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .card-body {
+    padding: clamp(1.25rem, 3vw, 2rem);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.75rem;
+  }
+
+  .card-title {
+    margin: 0;
+    font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+    font-weight: 700;
+  }
+
+  .card-description {
+    margin: 0;
+    color: var(--proj-muted);
+    line-height: 1.6;
+  }
+
+  .card-link {
+    align-self: flex-start;
+    margin-top: 0.5rem;
+    color: var(--proj-link);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .card-link:hover {
+    text-decoration: underline;
+  }
+
+  .arrow {
+    position: absolute;
+    top: 50%;
+    z-index: 2;
+    translate: 0 -50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    border: 1px solid var(--proj-arrow-border);
+    border-radius: 999px;
+    background-color: var(--proj-arrow-bg);
+    color: var(--proj-text);
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    transition:
+      background-color var(--transition),
+      border-color var(--transition),
+      color var(--transition);
+  }
+  .arrow:hover {
+    background-color: var(--proj-arrow-hover-bg);
+    border-color: var(--proj-arrow-hover-border);
+  }
+  .arrow svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+  .prev {
+    left: clamp(-0.5rem, -1vw, -0.5rem);
+  }
+  .next {
+    right: clamp(-0.5rem, -1vw, -0.5rem);
+  }
+
+  @media (max-width: 640px) {
+    .arrow {
+      display: none;
+    }
+  }
+
+  .dots {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    padding: 0;
+    border: none;
+    border-radius: 999px;
+    background-color: var(--proj-dot);
+    cursor: pointer;
+    transition:
+      background-color var(--transition),
+      width var(--transition);
+  }
+  .dot[aria-selected="true"] {
+    background-color: var(--proj-dot-active);
+    width: 1.5rem;
+  }
+</style>
+
+<script>
+  document
+    .querySelectorAll<HTMLElement>(".projects .carousel")
+    .forEach((carousel) => {
+      const track = carousel.querySelector<HTMLElement>("[data-track]");
+      const prevBtn =
+        carousel.querySelector<HTMLButtonElement>("[data-prev]");
+      const nextBtn =
+        carousel.querySelector<HTMLButtonElement>("[data-next]");
+      const dots = Array.from(
+        carousel.querySelectorAll<HTMLButtonElement>("[data-dot]"),
+      );
+      if (!track) return;
+
+      const slides = Array.from(track.children) as HTMLElement[];
+      let current = 0;
+
+      const updateDots = () => {
+        dots.forEach((dot, i) =>
+          dot.setAttribute("aria-selected", String(i === current)),
+        );
+      };
+
+      const goTo = (index: number) => {
+        current = (index + slides.length) % slides.length;
+        track.scrollTo({
+          left: slides[current].offsetLeft,
+          behavior: "smooth",
+        });
+        updateDots();
+      };
+
+      prevBtn?.addEventListener("click", () => goTo(current - 1));
+      nextBtn?.addEventListener("click", () => goTo(current + 1));
+      dots.forEach((dot, i) => dot.addEventListener("click", () => goTo(i)));
+
+      track.addEventListener("scroll", () => {
+        window.requestAnimationFrame(() => {
+          const index = Math.round(track.scrollLeft / track.clientWidth);
+          if (index !== current && index >= 0 && index < slides.length) {
+            current = index;
+            updateDots();
+          }
+        });
+      });
+
+      updateDots();
+    });
+</script>
