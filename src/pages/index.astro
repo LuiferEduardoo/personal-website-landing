@@ -2,6 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Logo from "../components/Logo.astro";
 import ThemeToggle from "../components/ThemeToggle.astro";
+import Hero from "../components/Hero.astro";
 ---
 
 <BaseLayout title="Luifer Ortega">
@@ -12,14 +13,17 @@ import ThemeToggle from "../components/ThemeToggle.astro";
     <ThemeToggle />
   </header>
 
-  <main class="site-main">
+  <main>
+    <Hero />
   </main>
 </BaseLayout>
 
 <style>
   .site-header {
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
     z-index: 10;
     display: flex;
     align-items: center;
@@ -46,12 +50,6 @@ import ThemeToggle from "../components/ThemeToggle.astro";
     align-items: center;
     color: inherit;
     text-decoration: none;
-  }
-
-  .site-main {
-    padding: clamp(1.5rem, 5vw, 3rem);
-    max-width: 60rem;
-    margin-inline: auto;
   }
 </style>
 
