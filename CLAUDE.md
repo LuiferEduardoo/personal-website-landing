@@ -54,6 +54,15 @@ Todo cambio en este repositorio debe respetar, en este orden:
 - Formato consistente (Prettier/EditorConfig si se añaden); imports ordenados.
 - No introducir abstracciones anticipadas: resolver el caso actual, refactorizar cuando aparezca la tercera repetición.
 
+### 6. Theme-aware (siempre)
+
+- **Todo componente nuevo debe funcionar en modo light y dark.** No se acepta un componente con colores hardcodeados que solo se vean bien en un tema.
+- Usar los tokens globales de `src/styles/global.css` (`--color-bg`, `--color-surface`, `--color-text`, `--color-text-muted`, `--color-border`, `--color-accent`) como primera opción — ya adaptan automáticamente.
+- Si un componente necesita una paleta propia, definir variables locales dentro de su selector raíz con los valores **light** por defecto, y sobreescribirlas en un bloque `:global(:root[data-theme="dark"]) .componente { ... }` con los valores **dark**.
+- Transicionar suavemente: añadir `transition: background-color var(--transition), color var(--transition), border-color var(--transition)` donde aplique, para que el cambio con el toggle no sea brusco.
+- Verificar el componente en **ambos temas** antes de dar la tarea por terminada (no solo en el tema activo).
+- Imágenes/SVGs con color fijo que deban adaptarse: usar `currentColor` y controlar desde CSS, o proveer dos fuentes y alternar con el selector `[data-theme]`.
+
 ## Estructura esperada
 
 ```
