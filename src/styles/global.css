@@ -11,6 +11,11 @@
   --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --radius: 0.5rem;
   --transition: 160ms ease;
+  --header-height: 4.5rem;
+}
+
+html {
+  scroll-padding-top: var(--header-height);
 }
 
 :root[data-theme="dark"] {

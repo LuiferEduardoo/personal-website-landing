@@ -42,6 +42,7 @@ const slides = [
   .hero {
     position: relative;
     min-height: 100svh;
+    padding-top: var(--header-height);
     display: grid;
     place-items: center;
     overflow: hidden;
@@ -52,7 +53,7 @@ const slides = [
   .hero-bg,
   .hero-overlay {
     position: absolute;
-    inset: 0;
+    inset: var(--header-height) 0 0 0;
   }
 
   .hero-overlay {
