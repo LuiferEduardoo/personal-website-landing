@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import SiteHeader from "../../components/SiteHeader.astro";
+import ReadingProgress from "../../components/ReadingProgress.astro";
 import Footer from "../../components/Footer.astro";
 import {
   fetchBlogPosts,
@@ -50,6 +51,7 @@ const description = stripHtml(post.content).slice(0, 160);
 
 <BaseLayout title={`${post.title} — Luifer Ortega`} description={description}>
   <SiteHeader />
+  <ReadingProgress />
 
   <main class="blog-page">
     <article class="post">
