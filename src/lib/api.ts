@@ -27,6 +27,52 @@ export interface PaginatedProjects {
   offset: number;
 }
 
+export interface AuthorBrief {
+  id: number;
+  name: string;
+  email: string;
+}
+
+export interface BlogPostRead {
+  id: number;
+  title: string;
+  content: string;
+  link: string;
+  reading_time: string | null;
+  visible: boolean;
+  user: AuthorBrief;
+  cover_image: ImageRead | null;
+  authors: AuthorBrief[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PaginatedBlogPosts {
+  items: BlogPostRead[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+export function parseReadingMinutes(
+  value: string | null | undefined,
+): number {
+  if (!value) return 0;
+  const parts = value.split(":").map((p) => Number(p));
+  if (parts.some(Number.isNaN)) return 0;
+  const [h = 0, m = 0, s = 0] = parts;
+  const total = h * 60 + m + (s >= 30 ? 1 : 0);
+  return Math.max(total, 1);
+}
+
+export function stripHtml(html: string): string {
+  return html
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 export function normalizeUrl(url: string | null | undefined): string {
   if (!url) return "";
   const trimmed = url.trim();
@@ -57,10 +103,36 @@ export async function fetchProjectByLink(
     );
     if (!res.ok) return null;
     const project = (await res.json()) as ProjectRead;
-    console.log(project);
     return project;
   } catch (error) {
     console.warn("[api] fetchProjectByLink failed:", error);
+    return null;
+  }
+}
+
+export async function fetchBlogPosts(limit = 3): Promise<BlogPostRead[]> {
+  try {
+    const res = await fetch(`${API_URL}/api/v1/blog-posts?limit=${limit}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = (await res.json()) as PaginatedBlogPosts;
+    return data.items;
+  } catch (error) {
+    console.warn("[api] fetchBlogPosts failed:", error);
+    return [];
+  }
+}
+
+export async function fetchBlogPostByLink(
+  link: string,
+): Promise<BlogPostRead | null> {
+  try {
+    const res = await fetch(
+      `${API_URL}/api/v1/blog-posts/link/${encodeURIComponent(link)}`,
+    );
+    if (!res.ok) return null;
+    return (await res.json()) as BlogPostRead;
+  } catch (error) {
+    console.warn("[api] fetchBlogPostByLink failed:", error);
     return null;
   }
 }

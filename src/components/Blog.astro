@@ -1,41 +1,13 @@
 ---
-interface Post {
-  title: string;
-  image: string;
-  excerpt: string;
-  publishedAt: string;
-  readingMinutes: number;
-  url?: string;
-}
+import {
+  fetchBlogPosts,
+  normalizeUrl,
+  parseReadingMinutes,
+  stripHtml,
+} from "../lib/api";
 
-const now = Date.now();
-
-const posts: Post[] = [
-  {
-    title: "Primer post de ejemplo",
-    image: "/blog/post-1.svg",
-    excerpt:
-      "Este es un extracto de ejemplo del primer post. Habla brevemente del tema y se corta automáticamente cuando el contenido es más largo de lo que cabe en las líneas reservadas del card.",
-    publishedAt: new Date(now - 2 * 60 * 1000).toISOString(),
-    readingMinutes: 3,
-  },
-  {
-    title: "Segundo post de ejemplo",
-    image: "/blog/post-2.svg",
-    excerpt:
-      "Un segundo post con otro tema distinto. El extracto también es largo a propósito para demostrar que el recorte con puntos suspensivos funciona en todos los cards por igual.",
-    publishedAt: new Date(now - 3 * 24 * 60 * 60 * 1000).toISOString(),
-    readingMinutes: 5,
-  },
-  {
-    title: "Tercer post de ejemplo",
-    image: "/blog/post-3.svg",
-    excerpt:
-      "Un tercer post más antiguo. Como han pasado más de 30 días desde su publicación, en lugar de la fecha relativa se muestra la fecha absoluta abreviada en español.",
-    publishedAt: "2026-03-02T10:00:00Z",
-    readingMinutes: 8,
-  },
-];
+const posts = await fetchBlogPosts(3);
+const hasPosts = posts.length > 0;
 
 const MONTHS_ES = [
   "Ene.",
@@ -61,39 +33,55 @@ function formatAbsolute(iso: string): string {
 <section id="blog" class="blog" aria-labelledby="blog-heading">
   <h2 id="blog-heading" class="blog-heading">Blog</h2>
 
-  <div class="blog-grid">
-    {
-      posts.map((post, i) => (
-        <article class="post">
-          <a
-            class="post-link"
-            href={post.url ?? "#"}
-            aria-label={`Leer: ${post.title}`}
-          >
-            <div class="post-image">
-              <img
-                src={post.image}
-                alt=""
-                loading={i === 0 ? "eager" : "lazy"}
-                decoding="async"
-              />
-            </div>
-            <div class="post-body">
-              <h3 class="post-title">{post.title}</h3>
-              <p class="post-excerpt">{post.excerpt}</p>
-              <div class="post-meta">
-                <time datetime={post.publishedAt} data-relative>
-                  {formatAbsolute(post.publishedAt)}
-                </time>
-                <span class="dot" aria-hidden="true">·</span>
-                <span class="reading">{post.readingMinutes} min</span>
-              </div>
-            </div>
-          </a>
-        </article>
-      ))
-    }
-  </div>
+  {
+    hasPosts ? (
+      <div class="blog-grid">
+        {posts.map((post, i) => {
+          const minutes = parseReadingMinutes(post.reading_time);
+          const excerpt = stripHtml(post.content);
+          return (
+            <article class="post">
+              <a
+                class="post-link"
+                href={`/blog/${post.link}`}
+                aria-label={`Leer: ${post.title}`}
+              >
+                <div class="post-image">
+                  {post.cover_image?.url && (
+                    <img
+                      src={normalizeUrl(post.cover_image.url)}
+                      alt={post.cover_image.name ?? ""}
+                      loading={i === 0 ? "eager" : "lazy"}
+                      decoding="async"
+                    />
+                  )}
+                </div>
+                <div class="post-body">
+                  <h3 class="post-title">{post.title}</h3>
+                  <p class="post-excerpt">{excerpt}</p>
+                  <div class="post-meta">
+                    <time datetime={post.created_at} data-relative>
+                      {formatAbsolute(post.created_at)}
+                    </time>
+                    {minutes > 0 && (
+                      <>
+                        <span class="dot" aria-hidden="true">
+                          ·
+                        </span>
+                        <span class="reading">{minutes} min</span>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </a>
+            </article>
+          );
+        })}
+      </div>
+    ) : (
+      <p class="blog-empty">Pronto habrá publicaciones aquí.</p>
+    )
+  }
 </section>
 
 <style>
@@ -238,6 +226,13 @@ function formatAbsolute(iso: string): string {
 
   .post-meta .reading {
     font-weight: 600;
+  }
+
+  .blog-empty {
+    max-width: 72rem;
+    margin: 0 auto;
+    color: var(--blog-muted);
+    text-align: center;
   }
 </style>
 
