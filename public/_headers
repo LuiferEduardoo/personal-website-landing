@@ -1,0 +1,7 @@
+# Hashed assets generados por Astro: nunca cambian, se cachean para siempre
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# HTML y resto: revalidar siempre (el edge de CF igual cachea con ETag)
+/*
+  Cache-Control: public, max-age=0, must-revalidate

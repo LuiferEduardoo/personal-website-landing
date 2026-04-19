@@ -9,7 +9,9 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "preview:cf": "astro build && npx wrangler pages dev ./dist",
+    "deploy": "astro build && npx wrangler pages deploy ./dist"
   },
   "dependencies": {
     "astro": "^6.1.7"

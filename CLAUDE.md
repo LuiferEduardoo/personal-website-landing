@@ -81,3 +81,48 @@ public/         # Assets estáticos servidos tal cual
 - Antes de dar una tarea por terminada: `npm run build` debe pasar sin errores ni warnings de tipos.
 - Para cambios de UI: verificar en el navegador (`npm run dev`) en móvil y escritorio.
 - Commits pequeños y con mensajes claros; no mezclar refactor con feature.
+
+## Deploy (Cloudflare Pages)
+
+El sitio se despliega como **estático** en Cloudflare Pages. No se necesita adapter SSR porque las páginas dinámicas (`/blog/[link]`, `/blog/page/[n]`, `/projects/[link]`) se pre-renderizan en build-time vía `getStaticPaths`.
+
+### Archivos relevantes
+
+- `wrangler.toml`: nombre del proyecto Pages y `pages_build_output_dir = "./dist"`.
+- `public/_headers`: reglas de cache (assets hasheados de `/_astro/*` con `max-age=31536000 immutable`; resto revalida).
+- `.nvmrc`: Node 22 (coincide con `engines` de `package.json`).
+- `.env.example`: plantilla para `PUBLIC_API_URL`.
+
+### Opción A — Git integration (recomendado)
+
+1. Subir el repo a GitHub/GitLab.
+2. En Cloudflare Pages → *Create project* → *Connect to Git*.
+3. Build settings:
+   - Framework preset: **Astro**
+   - Build command: `npm run build`
+   - Build output directory: `dist`
+   - Root directory: (vacío)
+4. Variables de entorno (Settings → Environment variables):
+   - `PUBLIC_API_URL` = URL pública de la API (ej. `https://api.luifereduardoo.com`). No se puede usar `localhost` porque el build corre en los runners de Cloudflare.
+   - `NODE_VERSION` = `22` (o respetará `.nvmrc`).
+5. Cada push a `main` dispara un deploy nuevo; los PRs generan previews.
+
+### Opción B — Wrangler CLI
+
+Para deploy manual o previews locales:
+
+```bash
+# Preview local con el runtime de Pages
+npx wrangler pages dev ./dist
+
+# Deploy directo (requiere cuenta autenticada)
+npx wrangler login
+npm run build
+npx wrangler pages deploy ./dist
+```
+
+### Consideraciones
+
+- La API debe ser accesible públicamente en build-time. Si cambia la URL, actualizar `PUBLIC_API_URL` en el dashboard y re-desplegar.
+- Si en el futuro se agregan endpoints SSR o middleware, instalar `@astrojs/cloudflare` y cambiar `output` a `"server"` o `"hybrid"` en `astro.config.mjs`.
+- Astro genera `404.html` automáticamente desde `src/pages/404.astro`; Cloudflare Pages lo sirve en rutas no encontradas sin configuración adicional.
