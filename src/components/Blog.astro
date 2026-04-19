@@ -1,33 +1,11 @@
 ---
-import {
-  fetchBlogPosts,
-  normalizeUrl,
-  parseReadingMinutes,
-  stripHtml,
-} from "../lib/api";
+import { fetchBlogPostsPage } from "../lib/api";
+import BlogCard from "./BlogCard.astro";
 
-const posts = await fetchBlogPosts(3);
+const page = await fetchBlogPostsPage(3, 0);
+const posts = page.items;
 const hasPosts = posts.length > 0;
-
-const MONTHS_ES = [
-  "Ene.",
-  "Feb.",
-  "Mar.",
-  "Abr.",
-  "May.",
-  "Jun.",
-  "Jul.",
-  "Ago.",
-  "Sep.",
-  "Oct.",
-  "Nov.",
-  "Dic.",
-];
-
-function formatAbsolute(iso: string): string {
-  const d = new Date(iso);
-  return `${d.getDate()} ${MONTHS_ES[d.getMonth()]} ${d.getFullYear()}`;
-}
+const hasMore = page.total > posts.length;
 ---
 
 <section id="blog" class="blog" aria-labelledby="blog-heading">
@@ -35,49 +13,20 @@ function formatAbsolute(iso: string): string {
 
   {
     hasPosts ? (
-      <div class="blog-grid">
-        {posts.map((post, i) => {
-          const minutes = parseReadingMinutes(post.reading_time);
-          const excerpt = stripHtml(post.content);
-          return (
-            <article class="post">
-              <a
-                class="post-link"
-                href={`/blog/${post.link}`}
-                aria-label={`Leer: ${post.title}`}
-              >
-                <div class="post-image">
-                  {post.cover_image?.url && (
-                    <img
-                      src={normalizeUrl(post.cover_image.url)}
-                      alt={post.cover_image.name ?? ""}
-                      loading={i === 0 ? "eager" : "lazy"}
-                      decoding="async"
-                    />
-                  )}
-                </div>
-                <div class="post-body">
-                  <h3 class="post-title">{post.title}</h3>
-                  <p class="post-excerpt">{excerpt}</p>
-                  <div class="post-meta">
-                    <time datetime={post.created_at} data-relative>
-                      {formatAbsolute(post.created_at)}
-                    </time>
-                    {minutes > 0 && (
-                      <>
-                        <span class="dot" aria-hidden="true">
-                          ·
-                        </span>
-                        <span class="reading">{minutes} min</span>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </a>
-            </article>
-          );
-        })}
-      </div>
+      <>
+        <div class="blog-grid">
+          {posts.map((post, i) => (
+            <BlogCard post={post} eager={i === 0} />
+          ))}
+        </div>
+        {hasMore && (
+          <div class="blog-more">
+            <a class="blog-more-link" href="/blog">
+              Ver todos →
+            </a>
+          </div>
+        )}
+      </>
     ) : (
       <p class="blog-empty">Pronto habrá publicaciones aquí.</p>
     )
@@ -137,95 +86,30 @@ function formatAbsolute(iso: string): string {
     }
   }
 
-  .post {
-    border: 1px solid var(--blog-border);
-    border-radius: 1rem;
-    overflow: hidden;
-    background-color: var(--blog-surface);
-    box-shadow: var(--blog-shadow);
-    transition:
-      transform var(--transition),
-      box-shadow var(--transition),
-      border-color var(--transition);
-  }
-
-  .post:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--blog-shadow-hover);
-  }
-
-  .post-link {
-    display: block;
-    color: inherit;
-    text-decoration: none;
-  }
-
-  .post-link:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 4px;
-  }
-
-  .post-image {
-    aspect-ratio: 16 / 10;
-    background-color: var(--blog-image-bg);
-    overflow: hidden;
-  }
-
-  .post-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    transition: transform 400ms ease;
-  }
-
-  .post:hover .post-image img {
-    transform: scale(1.04);
-  }
-
-  .post-body {
-    padding: clamp(1rem, 2.5vw, 1.5rem);
+  .blog-more {
     display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
+    justify-content: center;
+    margin-top: clamp(1.5rem, 3vw, 2rem);
   }
 
-  .post-title {
-    margin: 0;
-    font-size: clamp(1.125rem, 2vw, 1.375rem);
-    font-weight: 700;
-    line-height: 1.3;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .post-excerpt {
-    margin: 0;
-    color: var(--blog-muted);
-    line-height: 1.6;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .post-meta {
-    display: flex;
+  .blog-more-link {
+    display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    margin-top: 0.25rem;
-    font-size: 0.8125rem;
-    color: var(--blog-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
+    padding: 0.625rem 1.25rem;
+    border: 1px solid var(--blog-border);
+    border-radius: var(--radius);
+    background-color: var(--blog-surface);
+    color: var(--blog-text);
+    text-decoration: none;
+    font-weight: 600;
+    transition:
+      border-color var(--transition),
+      color var(--transition);
   }
 
-  .post-meta .reading {
-    font-weight: 600;
+  .blog-more-link:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
   }
 
   .blog-empty {

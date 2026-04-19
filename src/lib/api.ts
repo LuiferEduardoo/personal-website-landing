@@ -111,14 +111,23 @@ export async function fetchProjectByLink(
 }
 
 export async function fetchBlogPosts(limit = 3): Promise<BlogPostRead[]> {
+  const page = await fetchBlogPostsPage(limit, 0);
+  return page.items;
+}
+
+export async function fetchBlogPostsPage(
+  limit = 10,
+  offset = 0,
+): Promise<PaginatedBlogPosts> {
   try {
-    const res = await fetch(`${API_URL}/api/v1/blog-posts?limit=${limit}`);
+    const res = await fetch(
+      `${API_URL}/api/v1/blog-posts?limit=${limit}&offset=${offset}`,
+    );
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = (await res.json()) as PaginatedBlogPosts;
-    return data.items;
+    return (await res.json()) as PaginatedBlogPosts;
   } catch (error) {
-    console.warn("[api] fetchBlogPosts failed:", error);
-    return [];
+    console.warn("[api] fetchBlogPostsPage failed:", error);
+    return { items: [], total: 0, limit, offset };
   }
 }
 

@@ -1,0 +1,171 @@
+---
+import {
+  normalizeUrl,
+  parseReadingMinutes,
+  stripHtml,
+  type BlogPostRead,
+} from "../lib/api";
+
+interface Props {
+  post: BlogPostRead;
+  eager?: boolean;
+}
+
+const { post, eager = false } = Astro.props;
+
+const minutes = parseReadingMinutes(post.reading_time);
+const excerpt = stripHtml(post.content);
+
+const MONTHS_ES = [
+  "Ene.",
+  "Feb.",
+  "Mar.",
+  "Abr.",
+  "May.",
+  "Jun.",
+  "Jul.",
+  "Ago.",
+  "Sep.",
+  "Oct.",
+  "Nov.",
+  "Dic.",
+];
+
+const formatAbsolute = (iso: string): string => {
+  const d = new Date(iso);
+  return `${d.getDate()} ${MONTHS_ES[d.getMonth()]} ${d.getFullYear()}`;
+};
+---
+
+<article class="post">
+  <a
+    class="post-link"
+    href={`/blog/${post.link}`}
+    aria-label={`Leer: ${post.title}`}
+  >
+    <div class="post-image">
+      {
+        post.cover_image?.url && (
+          <img
+            src={normalizeUrl(post.cover_image.url)}
+            alt={post.cover_image.name ?? ""}
+            loading={eager ? "eager" : "lazy"}
+            decoding="async"
+          />
+        )
+      }
+    </div>
+    <div class="post-body">
+      <h3 class="post-title">{post.title}</h3>
+      <p class="post-excerpt">{excerpt}</p>
+      <div class="post-meta">
+        <time datetime={post.created_at} data-relative>
+          {formatAbsolute(post.created_at)}
+        </time>
+        {
+          minutes > 0 && (
+            <>
+              <span class="dot" aria-hidden="true">
+                ·
+              </span>
+              <span class="reading">{minutes} min</span>
+            </>
+          )
+        }
+      </div>
+    </div>
+  </a>
+</article>
+
+<style>
+  .post {
+    border: 1px solid var(--blog-border, var(--color-border));
+    border-radius: 1rem;
+    overflow: hidden;
+    background-color: var(--blog-surface, var(--color-surface));
+    box-shadow: var(--blog-shadow, 0 12px 30px -18px rgba(0, 0, 0, 0.25));
+    transition:
+      transform var(--transition),
+      box-shadow var(--transition),
+      border-color var(--transition);
+  }
+
+  .post:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--blog-shadow-hover, 0 20px 40px -20px rgba(0, 0, 0, 0.35));
+  }
+
+  .post-link {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .post-link:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 4px;
+  }
+
+  .post-image {
+    aspect-ratio: 16 / 10;
+    background-color: var(--blog-image-bg, rgba(0, 0, 0, 0.04));
+    overflow: hidden;
+  }
+
+  .post-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 400ms ease;
+  }
+
+  .post:hover .post-image img {
+    transform: scale(1.04);
+  }
+
+  .post-body {
+    padding: clamp(1rem, 2.5vw, 1.5rem);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .post-title {
+    margin: 0;
+    font-size: clamp(1.125rem, 2vw, 1.375rem);
+    font-weight: 700;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .post-excerpt {
+    margin: 0;
+    color: var(--blog-muted, var(--color-text-muted));
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .post-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.25rem;
+    font-size: 0.8125rem;
+    color: var(--blog-muted, var(--color-text-muted));
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .post-meta .reading {
+    font-weight: 600;
+  }
+</style>

@@ -1,0 +1,176 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import SiteHeader from "../../../components/SiteHeader.astro";
+import Footer from "../../../components/Footer.astro";
+import BlogRowCard from "../../../components/BlogRowCard.astro";
+import { fetchBlogPostsPage, type BlogPostRead } from "../../../lib/api";
+
+const PAGE_SIZE = 10;
+
+export async function getStaticPaths() {
+  const PAGE_SIZE = 10;
+  const first = await fetchBlogPostsPage(1, 0);
+  const totalPages = Math.max(1, Math.ceil(first.total / PAGE_SIZE));
+
+  const paths = [] as Array<{
+    params: { n: string };
+    props: {
+      posts: BlogPostRead[];
+      currentPage: number;
+      totalPages: number;
+    };
+  }>;
+
+  for (let n = 2; n <= totalPages; n++) {
+    const offset = (n - 1) * PAGE_SIZE;
+    const page = await fetchBlogPostsPage(PAGE_SIZE, offset);
+    paths.push({
+      params: { n: String(n) },
+      props: {
+        posts: page.items,
+        currentPage: n,
+        totalPages,
+      },
+    });
+  }
+
+  return paths;
+}
+
+interface Props {
+  posts: BlogPostRead[];
+  currentPage: number;
+  totalPages: number;
+}
+
+const { posts, currentPage, totalPages } = Astro.props;
+const prevUrl = currentPage === 2 ? "/blog" : `/blog/page/${currentPage - 1}`;
+const nextUrl =
+  currentPage < totalPages ? `/blog/page/${currentPage + 1}` : null;
+---
+
+<BaseLayout
+  title={`Blog — Página ${currentPage} — Luifer Ortega`}
+  description="Publicaciones sobre desarrollo, ideas y procesos."
+>
+  <SiteHeader />
+
+  <main class="blog-page">
+    <header class="blog-header">
+      <h1 class="blog-title">Blog</h1>
+      <p class="blog-subtitle">
+        Página {currentPage} de {totalPages}
+      </p>
+    </header>
+
+    <div class="blog-list">
+      {posts.map((post) => <BlogRowCard post={post} />)}
+    </div>
+
+    <div class="blog-pagination">
+      <a class="page-link" href={prevUrl}>← Anterior</a>
+      {
+        nextUrl && (
+          <a class="page-link" href={nextUrl}>
+            Siguiente →
+          </a>
+        )
+      }
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .blog-page {
+    padding-top: var(--header-height);
+  }
+
+  .blog-header {
+    max-width: 60rem;
+    margin: 0 auto;
+    padding: clamp(1.5rem, 4vw, 3rem) clamp(1rem, 4vw, 2rem);
+    text-align: center;
+  }
+
+  .blog-title {
+    margin: 0 0 0.5rem;
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 700;
+    line-height: 1.15;
+  }
+
+  .blog-subtitle {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: clamp(1rem, 2vw, 1.125rem);
+  }
+
+  .blog-list {
+    max-width: 60rem;
+    margin: 0 auto;
+    padding: 0 clamp(1rem, 4vw, 2rem);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .blog-pagination {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    max-width: 60rem;
+    margin: 0 auto;
+    padding: clamp(2rem, 4vw, 3rem) clamp(1rem, 4vw, 2rem);
+  }
+
+  .page-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.625rem 1.25rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    text-decoration: none;
+    font-weight: 600;
+    transition:
+      border-color var(--transition),
+      color var(--transition);
+  }
+
+  .page-link:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+</style>
+
+<script>
+  const formatRelative = (iso: string): string | null => {
+    const diffMs = Date.now() - new Date(iso).getTime();
+    if (diffMs < 0) return null;
+    const diffMin = Math.floor(diffMs / 60000);
+    if (diffMin < 1) return "hace un momento";
+    if (diffMin < 60)
+      return `hace ${diffMin} ${diffMin === 1 ? "minuto" : "minutos"}`;
+    const diffHour = Math.floor(diffMin / 60);
+    if (diffHour < 24)
+      return `hace ${diffHour} ${diffHour === 1 ? "hora" : "horas"}`;
+    const diffDay = Math.floor(diffHour / 24);
+    if (diffDay < 7)
+      return `hace ${diffDay} ${diffDay === 1 ? "día" : "días"}`;
+    if (diffDay < 30) {
+      const diffWeek = Math.floor(diffDay / 7);
+      return `hace ${diffWeek} ${diffWeek === 1 ? "semana" : "semanas"}`;
+    }
+    return null;
+  };
+
+  document
+    .querySelectorAll<HTMLTimeElement>("time[data-relative]")
+    .forEach((el) => {
+      const iso = el.getAttribute("datetime");
+      if (!iso) return;
+      const relative = formatRelative(iso);
+      if (relative) el.textContent = relative;
+    });
+</script>

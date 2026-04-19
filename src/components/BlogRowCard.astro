@@ -1,0 +1,178 @@
+---
+import {
+  normalizeUrl,
+  parseReadingMinutes,
+  stripHtml,
+  type BlogPostRead,
+} from "../lib/api";
+
+interface Props {
+  post: BlogPostRead;
+  eager?: boolean;
+}
+
+const { post, eager = false } = Astro.props;
+
+const minutes = parseReadingMinutes(post.reading_time);
+const excerpt = stripHtml(post.content);
+
+const MONTHS_ES = [
+  "Ene.",
+  "Feb.",
+  "Mar.",
+  "Abr.",
+  "May.",
+  "Jun.",
+  "Jul.",
+  "Ago.",
+  "Sep.",
+  "Oct.",
+  "Nov.",
+  "Dic.",
+];
+
+const formatAbsolute = (iso: string): string => {
+  const d = new Date(iso);
+  return `${d.getDate()} ${MONTHS_ES[d.getMonth()]} ${d.getFullYear()}`;
+};
+---
+
+<article class="row">
+  <a class="row-link" href={`/blog/${post.link}`} aria-label={`Leer: ${post.title}`}>
+    <div class="row-image">
+      {
+        post.cover_image?.url && (
+          <img
+            src={normalizeUrl(post.cover_image.url)}
+            alt={post.cover_image.name ?? ""}
+            loading={eager ? "eager" : "lazy"}
+            decoding="async"
+          />
+        )
+      }
+    </div>
+    <div class="row-body">
+      <div class="row-meta">
+        <time datetime={post.created_at} data-relative>
+          {formatAbsolute(post.created_at)}
+        </time>
+        {
+          minutes > 0 && (
+            <>
+              <span aria-hidden="true">·</span>
+              <span class="reading">{minutes} min</span>
+            </>
+          )
+        }
+      </div>
+      <h3 class="row-title">{post.title}</h3>
+      <p class="row-excerpt">{excerpt}</p>
+      <span class="row-cta">Leer →</span>
+    </div>
+  </a>
+</article>
+
+<style>
+  .row {
+    border-bottom: 1px solid var(--color-border);
+    transition: border-color var(--transition);
+  }
+
+  .row-link {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: clamp(1rem, 2vw, 1.5rem) 0;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  @media (min-width: 640px) {
+    .row-link {
+      grid-template-columns: 14rem 1fr;
+      gap: clamp(1rem, 3vw, 2rem);
+      align-items: center;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .row-link {
+      grid-template-columns: 18rem 1fr;
+    }
+  }
+
+  .row-link:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 4px;
+  }
+
+  .row-image {
+    aspect-ratio: 16 / 10;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background-color: var(--color-surface);
+  }
+
+  .row-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 400ms ease;
+  }
+
+  .row:hover .row-image img {
+    transform: scale(1.03);
+  }
+
+  .row-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 0;
+  }
+
+  .row-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .row-meta .reading {
+    font-weight: 600;
+  }
+
+  .row-title {
+    margin: 0;
+    font-size: clamp(1.25rem, 2.5vw, 1.625rem);
+    font-weight: 700;
+    line-height: 1.25;
+    transition: color var(--transition);
+  }
+
+  .row:hover .row-title {
+    color: var(--color-accent);
+  }
+
+  .row-excerpt {
+    margin: 0;
+    color: var(--color-text-muted);
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .row-cta {
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-accent);
+  }
+</style>
