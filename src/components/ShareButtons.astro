@@ -1,0 +1,204 @@
+---
+interface Props {
+  title: string;
+  url?: string;
+}
+
+const { title, url } = Astro.props;
+const shareUrl = url ?? Astro.url.href;
+const u = encodeURIComponent(shareUrl);
+const t = encodeURIComponent(title);
+---
+
+<div class="share">
+  <span class="share-label">Compartir</span>
+  <div class="share-buttons">
+    <a
+      class="share-btn"
+      href={`https://twitter.com/intent/tweet?url=${u}&text=${t}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Compartir en X"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path
+          fill="currentColor"
+          d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"
+        ></path>
+      </svg>
+    </a>
+
+    <a
+      class="share-btn"
+      href={`https://www.linkedin.com/sharing/share-offsite/?url=${u}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Compartir en LinkedIn"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path
+          fill="currentColor"
+          d="M19 0h-14c-2.8 0-5 2.2-5 5v14c0 2.8 2.2 5 5 5h14c2.8 0 5-2.2 5-5v-14c0-2.8-2.2-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.3c-1 0-1.7-.8-1.7-1.7s.8-1.7 1.7-1.7 1.7.8 1.7 1.7-.7 1.7-1.7 1.7zm13.5 12.3h-3v-5.6c0-1.4-.5-2.4-1.8-2.4-1 0-1.6.7-1.9 1.3-.1.2-.1.5-.1.9v5.8h-3s0-9.8 0-11h3v1.6c.4-.6 1.1-1.5 2.8-1.5 2 0 3.5 1.3 3.5 4.2v6.7z"
+        ></path>
+      </svg>
+    </a>
+
+    <a
+      class="share-btn"
+      href={`https://www.facebook.com/sharer/sharer.php?u=${u}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Compartir en Facebook"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path
+          fill="currentColor"
+          d="M22 12.06C22 6.53 17.52 2 12 2S2 6.53 2 12.06c0 5 3.66 9.13 8.44 9.88v-6.99H7.9v-2.89h2.54V9.85c0-2.51 1.49-3.89 3.77-3.89 1.09 0 2.24.19 2.24.19v2.47h-1.26c-1.24 0-1.63.77-1.63 1.56v1.88h2.77l-.44 2.89h-2.33v6.99C18.34 21.19 22 17.06 22 12.06z"
+        ></path>
+      </svg>
+    </a>
+
+    <a
+      class="share-btn"
+      href={`https://wa.me/?text=${t}%20${u}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Compartir en WhatsApp"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path
+          fill="currentColor"
+          d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"
+        ></path>
+      </svg>
+    </a>
+
+    <button
+      type="button"
+      class="share-btn"
+      data-share-copy
+      data-copy-url={shareUrl}
+      aria-label="Copiar enlace"
+    >
+      <svg class="icon-default" viewBox="0 0 24 24" aria-hidden="true" fill="none">
+        <path
+          d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"></path>
+        <path
+          d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"></path>
+      </svg>
+      <svg class="icon-copied" viewBox="0 0 24 24" aria-hidden="true" fill="none">
+        <path
+          d="M5 12.5l4.5 4.5L19 7"
+          stroke="currentColor"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"></path>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<style>
+  .share {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .share-label {
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-muted);
+    font-weight: 600;
+  }
+
+  .share-buttons {
+    display: inline-flex;
+    gap: 0.5rem;
+  }
+
+  .share-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background-color: var(--color-surface);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    text-decoration: none;
+    transition:
+      color var(--transition),
+      border-color var(--transition),
+      background-color var(--transition),
+      transform var(--transition);
+  }
+
+  .share-btn:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+    transform: translateY(-1px);
+  }
+
+  .share-btn:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .share-btn svg {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .icon-copied {
+    display: none;
+    color: #10b981;
+  }
+
+  .share-btn.is-copied {
+    color: #10b981;
+    border-color: #10b981;
+  }
+
+  .share-btn.is-copied .icon-default {
+    display: none;
+  }
+
+  .share-btn.is-copied .icon-copied {
+    display: inline;
+  }
+</style>
+
+<script>
+  document
+    .querySelectorAll<HTMLButtonElement>("[data-share-copy]")
+    .forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const url = btn.dataset.copyUrl ?? window.location.href;
+        try {
+          await navigator.clipboard.writeText(url);
+          btn.classList.add("is-copied");
+          btn.setAttribute("aria-label", "¡Enlace copiado!");
+          window.setTimeout(() => {
+            btn.classList.remove("is-copied");
+            btn.setAttribute("aria-label", "Copiar enlace");
+          }, 1800);
+        } catch {
+          window.prompt("Copia el enlace:", url);
+        }
+      });
+    });
+</script>

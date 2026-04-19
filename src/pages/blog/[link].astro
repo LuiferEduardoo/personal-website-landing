@@ -2,6 +2,7 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import SiteHeader from "../../components/SiteHeader.astro";
 import ReadingProgress from "../../components/ReadingProgress.astro";
+import ShareButtons from "../../components/ShareButtons.astro";
 import Footer from "../../components/Footer.astro";
 import {
   fetchBlogPosts,
@@ -96,6 +97,10 @@ const description = stripHtml(post.content).slice(0, 160);
         </div>
 
         <div class="post-body" set:html={post.content} />
+
+        <div class="post-share">
+          <ShareButtons title={post.title} />
+        </div>
       </div>
     </article>
   </main>
@@ -222,6 +227,12 @@ const description = stripHtml(post.content).slice(0, 160);
     padding-left: 1rem;
     border-left: 3px solid var(--color-border);
     color: var(--color-text-muted);
+  }
+
+  .post-share {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    padding-top: clamp(1.5rem, 3vw, 2rem);
+    border-top: 1px solid var(--color-border);
   }
 </style>
 
