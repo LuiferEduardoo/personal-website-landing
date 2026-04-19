@@ -12,7 +12,7 @@ net.setDefaultAutoSelectFamily(false);
 
 const API_URL =
   import.meta.env.PUBLIC_API_URL?.replace(/\/$/, "") ??
-  "http://localhost:8000";
+  "https://api.luifereduardoo.com";
 
 export interface ImageRead {
   id: number;
