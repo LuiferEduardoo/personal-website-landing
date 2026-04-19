@@ -6,8 +6,8 @@
     "node": ">=22.12.0"
   },
   "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
+    "dev": "NODE_OPTIONS='--dns-result-order=ipv4first' astro dev",
+    "build": "NODE_OPTIONS='--dns-result-order=ipv4first' astro build",
     "preview": "astro preview",
     "astro": "astro",
     "preview:cf": "astro build && npx wrangler pages dev ./dist",
