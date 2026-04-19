@@ -1,113 +1,97 @@
 ---
-interface Project {
-  title: string;
-  description: string;
-  image: string;
-  url?: string;
-}
+import { fetchProjects, normalizeUrl } from "../lib/api";
 
-const projects: Project[] = [
-  {
-    title: "Proyecto 1",
-    description:
-      "Breve descripción del proyecto. Reemplaza este texto con el resumen real de lo que construiste.",
-    image: "/projects/project-1.svg",
-  },
-  {
-    title: "Proyecto 2",
-    description:
-      "Breve descripción del proyecto. Reemplaza este texto con el resumen real de lo que construiste.",
-    image: "/projects/project-2.svg",
-  },
-  {
-    title: "Proyecto 3",
-    description:
-      "Breve descripción del proyecto. Reemplaza este texto con el resumen real de lo que construiste.",
-    image: "/projects/project-3.svg",
-  },
-];
+const projects = await fetchProjects(50);
+const hasProjects = projects.length > 0;
 ---
 
 <section id="proyectos" class="projects" aria-labelledby="projects-heading">
   <h2 id="projects-heading" class="projects-heading">Proyectos</h2>
 
-  <div
-    class="carousel"
-    role="region"
-    aria-roledescription="carrusel"
-    aria-label="Proyectos"
-  >
-    <div class="track" data-track>
-      {
-        projects.map((project, i) => (
-          <article class="slide">
-            <div class="card">
-              <div class="card-image">
-                <img
-                  src={project.image}
-                  alt=""
-                  loading={i === 0 ? "eager" : "lazy"}
-                  decoding="async"
-                  draggable="false"
-                />
-              </div>
-              <div class="card-body">
-                <h3 class="card-title">{project.title}</h3>
-                <p class="card-description">{project.description}</p>
-                {project.url && (
-                  <a
-                    class="card-link"
-                    href={project.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Ver proyecto →
-                  </a>
-                )}
-              </div>
-            </div>
-          </article>
-        ))
-      }
-    </div>
+  {
+    hasProjects ? (
+      <div
+        class="carousel"
+        role="region"
+        aria-roledescription="carrusel"
+        aria-label="Proyectos"
+      >
+        <div class="track" data-track>
+          {projects.map((project, i) => (
+            <article class="slide">
+              <a class="card" href={`/projects/${project.link}`}>
+                <div class="card-image">
+                  {project.image?.url && (
+                    <img
+                      src={normalizeUrl(project.image.url)}
+                      alt={project.image.name ?? ""}
+                      loading={i === 0 ? "eager" : "lazy"}
+                      decoding="async"
+                      draggable="false"
+                    />
+                  )}
+                </div>
+                <div class="card-body">
+                  <h3 class="card-title">{project.name}</h3>
+                  <p class="card-description">{project.brief_description}</p>
+                  <span class="card-link">Ver proyecto →</span>
+                </div>
+              </a>
+            </article>
+          ))}
+        </div>
 
-    <button type="button" class="arrow prev" data-prev aria-label="Anterior">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path
-          d="M15 6l-6 6 6 6"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"></path>
-      </svg>
-    </button>
-    <button type="button" class="arrow next" data-next aria-label="Siguiente">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path
-          d="M9 6l6 6-6 6"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"></path>
-      </svg>
-    </button>
+        <button
+          type="button"
+          class="arrow prev"
+          data-prev
+          aria-label="Anterior"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M15 6l-6 6 6 6"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
+        <button
+          type="button"
+          class="arrow next"
+          data-next
+          aria-label="Siguiente"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M9 6l6 6-6 6"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
 
-    <div class="dots" role="tablist" aria-label="Selector de proyecto">
-      {
-        projects.map((_, i) => (
-          <button
-            type="button"
-            class="dot"
-            data-dot={i}
-            role="tab"
-            aria-label={`Ver proyecto ${i + 1}`}
-          />
-        ))
-      }
-    </div>
-  </div>
+        <div class="dots" role="tablist" aria-label="Selector de proyecto">
+          {projects.map((_, i) => (
+            <button
+              type="button"
+              class="dot"
+              data-dot={i}
+              role="tab"
+              aria-label={`Ver proyecto ${i + 1}`}
+            />
+          ))}
+        </div>
+      </div>
+    ) : (
+      <p class="projects-empty">Pronto habrá proyectos aquí.</p>
+    )
+  }
 </section>
 
 <style>
@@ -190,6 +174,28 @@ const projects: Project[] = [
     border-radius: 1rem;
     overflow: hidden;
     background-color: var(--proj-surface);
+    color: inherit;
+    text-decoration: none;
+    transition:
+      border-color var(--transition),
+      transform var(--transition);
+  }
+
+  .card:hover {
+    border-color: var(--proj-link);
+    transform: translateY(-2px);
+  }
+
+  .card:focus-visible {
+    outline: 2px solid var(--proj-link);
+    outline-offset: 2px;
+  }
+
+  .projects-empty {
+    max-width: 72rem;
+    margin: 0 auto;
+    color: var(--proj-muted);
+    text-align: center;
   }
 
   @media (min-width: 768px) {
