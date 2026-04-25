@@ -2,21 +2,12 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import SiteHeader from "../../components/SiteHeader.astro";
 import Footer from "../../components/Footer.astro";
-import { fetchProjects, normalizeUrl, type ProjectRead } from "../../lib/api";
+import { fetchProjectByLink, normalizeUrl } from "../../lib/api";
 
-export async function getStaticPaths() {
-  const projects = await fetchProjects(100);
-  return projects.map((project) => ({
-    params: { link: project.link },
-    props: { project },
-  }));
-}
+const { link } = Astro.params;
+const project = await fetchProjectByLink(link!);
 
-interface Props {
-  project: ProjectRead;
-}
-
-const { project } = Astro.props;
+if (!project) return new Response(null, { status: 404 });
 ---
 
 <BaseLayout

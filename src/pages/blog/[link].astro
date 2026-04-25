@@ -5,26 +5,16 @@ import ReadingProgress from "../../components/ReadingProgress.astro";
 import ShareButtons from "../../components/ShareButtons.astro";
 import Footer from "../../components/Footer.astro";
 import {
-  fetchBlogPosts,
+  fetchBlogPostByLink,
   normalizeUrl,
   parseReadingMinutes,
   stripHtml,
-  type BlogPostRead,
 } from "../../lib/api";
 
-export async function getStaticPaths() {
-  const posts = await fetchBlogPosts(100);
-  return posts.map((post) => ({
-    params: { link: post.link },
-    props: { post },
-  }));
-}
+const { link } = Astro.params;
+const post = await fetchBlogPostByLink(link!);
 
-interface Props {
-  post: BlogPostRead;
-}
-
-const { post } = Astro.props;
+if (!post) return new Response(null, { status: 404 });
 
 const MONTHS_ES = [
   "Ene.",

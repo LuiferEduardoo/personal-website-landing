@@ -7,8 +7,9 @@ import { setDefaultResultOrder } from "node:dns";
 // - setDefaultAutoSelectFamily(false): desactiva Happy Eyeballs v2 para que
 //   Node no corra IPv4 + IPv6 en paralelo — un ENETUNREACH del IPv6 aborta
 //   también el intento IPv4 vía AggregateError, aunque IPv4 sí sería alcanzable.
-setDefaultResultOrder("ipv4first");
-net.setDefaultAutoSelectFamily(false);
+// En el Workers runtime de Cloudflare estas APIs no existen; se ignoran con try/catch.
+try { setDefaultResultOrder("ipv4first"); } catch { /* Workers runtime */ }
+try { net.setDefaultAutoSelectFamily(false); } catch { /* Workers runtime */ }
 
 const API_URL =
   import.meta.env.PUBLIC_API_URL?.replace(/\/$/, "") ??
