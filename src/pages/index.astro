@@ -7,6 +7,11 @@ import Projects from "../components/Projects.astro";
 import Blog from "../components/Blog.astro";
 import Contact from "../components/Contact.astro";
 import Footer from "../components/Footer.astro";
+
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, s-maxage=300, stale-while-revalidate=3600",
+);
 ---
 
 <BaseLayout title="Luifer Ortega">

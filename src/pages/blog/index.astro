@@ -9,6 +9,11 @@ const PAGE_SIZE = 10;
 const page = await fetchBlogPostsPage(PAGE_SIZE, 0);
 const posts = page.items;
 const hasMore = page.total > posts.length;
+
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, s-maxage=300, stale-while-revalidate=3600",
+);
 ---
 
 <BaseLayout
